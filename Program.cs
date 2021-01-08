@@ -62,7 +62,7 @@ namespace Bot_CNAM
             var context = new SocketCommandContext(client, message);
             var result = await commands.ExecuteAsync(context, argPos, null);
             if (!result.IsSuccess) await context.Channel.SendMessageAsync(result.ErrorReason);
-        }
+        }//test
 
     }
 }
