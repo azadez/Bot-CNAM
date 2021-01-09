@@ -6,22 +6,64 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
+using System.Web;
+using System.Net;
+using System.IO;
+using RestSharp;
 
 namespace Bot_CNAM
 {
     class edt
     {
+        string url = "http://qrc.gescicca.net/Planning.aspx?id=mmw7MgOktQ%2bcNzdLFCBR0g%3d%3d&annsco=2020&typepersonne=AUDITEUR";
         public edt()
         {
 
         }
-        public async Task<string> Getedt()
-        {
-            var httpClient = new HttpClient();
-            var html = await httpClient.GetStringAsync("http://qrc.gescicca.net/Planning.aspx?id=mmw7MgOktQ%2bcNzdLFCBR0g%3d%3d&annsco=2020&typepersonne=AUDITEUR");
 
+        private string GetReq(string url)
+        {
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("postman-token", "6aef6e79-9eef-5e6b-043b-0bbd4da3380e");
+            request.AddHeader("cache-control", "no-cache");
+            IRestResponse response = client.Execute(request);
+            return response.Content;
+        }
+
+        private string PostReq(string url, string state)
+        {
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("postman-token", "6aef6e79-9eef-5e6b-043b-0bbd4da3380e");
+            request.AddHeader("cache-control", "no-cache");
+            request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+            request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"__VIEWSTATE\"\r\n\r\n" + state + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"__VIEWSTATEGENERATOR\"\r\n\r\nD809D6B1\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"ctl00$MainContent$btnNavNext.x\"\r\n\r\n10\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"ctl00$MainContent$btnNavNext.y\"\r\n\r\n10\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+            var response = client.Execute(request);
+            return response.Content;
+        }
+
+        private string SearchState(string content)
+        {
             var htmlDocument = new HtmlDocument();
-            htmlDocument.LoadHtml(html);
+            htmlDocument.LoadHtml(content);
+            var viewstate = htmlDocument.DocumentNode.Descendants("input")
+                .Where(node => node.GetAttributeValue("id", "")
+                .Equals("__VIEWSTATE")).ToList();
+            return viewstate[0].GetAttributeValue("value", "");
+        }
+        public async Task<string> Getedt(bool B)
+        {
+            var content = GetReq(url);
+
+            if (B)
+            {
+                content = PostReq(url, SearchState(content));
+            }
+            
+            var htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(content);
+
 
             var InfoList = htmlDocument.DocumentNode.Descendants("span")
                 .Where(node => node.GetAttributeValue("id", "")
@@ -32,31 +74,36 @@ namespace Bot_CNAM
                 .Where(node => node.GetAttributeValue("id", "")
                 .Contains("ctl00_MainContent_rptr")).ToList();
 
+            return Concat(InfoList, MatiereList);
+        }
+
+        private string Concat(List<HtmlNode> l1, List<HtmlNode> l2)
+        {
             var value = new[] { "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche" };
             StringBuilder str = new StringBuilder();
             str.Append("```");
             int x = 0;
             int y = 0;
-            while (x < InfoList.Count())
+            while (x < l1.Count())
             {
-                if (value.Any(InfoList[x].InnerText.Contains))
+                if (value.Any(l1[x].InnerText.Contains))
                 {
                     str.AppendLine("");
-                    str.AppendLine($"{InfoList[x].InnerText}");
+                    str.AppendLine($"{l1[x].InnerText}");
 
                     x++;
                 }
                 else
                 {
-                    if (InfoList[x + 1].InnerText.Equals("Examen"))
+                    if (l1[x + 1].InnerText.Equals("Examen"))
                     {
-                        str.AppendLine($"{InfoList[x].InnerText,-15} Examen   {cours(MatiereList[y].InnerText),-50} {InfoList[x + 2].InnerText}");
+                        str.AppendLine($"{l1[x].InnerText,-15} Examen   {cours(l2[y].InnerText),-50} {l1[x + 2].InnerText}");
                         x += 3;
                         y++;
                     }
                     else
                     {
-                        str.AppendLine($"{InfoList[x].InnerText,-24} {cours(MatiereList[y].InnerText),-50} {InfoList[x + 2].InnerText}");
+                        str.AppendLine($"{l1[x].InnerText,-24} {cours(l2[y].InnerText),-50} {l1[x + 2].InnerText}");
                         x += 3;
                         y++;
                     }

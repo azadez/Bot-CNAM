@@ -60,7 +60,14 @@ namespace Bot_CNAM.Modules
         [Command("edt")]
         public async Task edtasync(params string[] tab)
         {
-            string x = edt.Getedt().Result;
+            string x = edt.Getedt(false).Result;
+            await ReplyAsync(x);
+        }
+
+        [Command("edtnext")]
+        public async Task edtnextasync(params string[] tab)
+        {
+            string x = edt.Getedt(true).Result;
             await ReplyAsync(x);
         }
 
