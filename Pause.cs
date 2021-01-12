@@ -15,9 +15,9 @@ namespace Bot_CNAM
 
         }
 
-        public static void fairepause5m()
+        public static void fairepause10m()
         {
-            for (cpt = 0; cpt < 300; cpt++)
+            for (cpt = 0; cpt < 600; cpt++)
             {
                 Thread.Sleep(1000);
             }

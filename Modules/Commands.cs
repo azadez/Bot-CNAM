@@ -21,10 +21,18 @@ namespace Bot_CNAM.Modules
             StringBuilder str = new StringBuilder();
             str.AppendLine($"```Je t'aide mais t'es quand meme un fils de poule ");
             str.AppendLine();
+            str.AppendLine($"!edt pour avoir la semaine actuelle de l'edt");
+            str.AppendLine($"!edtnext pour avoir la semaine suivante");
+            str.AppendLine($"!shuffle pour faire chier le monde en vocal mais avec modération stp");
+            str.AppendLine($"!anniv @tag pour souhaiter un bon anniversaire à @tag");
             str.AppendLine($"!quote pour avoir une citation du hallivier of fame");
             str.AppendLine($"!pilon pour avoir des conseils");
             str.AppendLine($"!help pour aller te faire enculer");
-            str.AppendLine($"!chugo pour la masterclasse```");
+            str.AppendLine($"!chugo pour la masterclasse");
+            str.AppendLine($"!joke pour une petite balgue");
+            str.AppendLine($"!vdm pour se dire qu'on est pas seul comme merde");
+            str.AppendLine($"```");
+
             await ReplyAsync(str.ToString());
         }
 
@@ -85,7 +93,7 @@ namespace Bot_CNAM.Modules
             if (!pause)
             {
                 pause = true;
-                var myThread = new Thread(new ThreadStart(Pause.fairepause5m));
+                var myThread = new Thread(new ThreadStart(Pause.fairepause10m));
                 myThread.Start();
                 var rand = new Random();
                 var listchannel = Context.Guild.VoiceChannels;
