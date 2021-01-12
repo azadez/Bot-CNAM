@@ -77,5 +77,17 @@ namespace Bot_CNAM.Modules
             await ReplyAsync(Vrac.anniv(str),true);
         }
 
+        [Command("shuffle")]
+        public async Task shuffle()
+        {
+            var rand = new Random();
+            var listchannel = Context.Guild.VoiceChannels;
+            var user = Context.Guild.Users;
+            foreach (var u in user)
+            {
+                await u.ModifyAsync(x => x.Channel = listchannel.ElementAt(rand.Next(0, listchannel.Count() - 1)));
+            }
+        }
+
     }
 }
