@@ -10,6 +10,7 @@ namespace Bot_CNAM.Modules
 {
     public class Commands : ModuleBase<SocketCommandContext>
     {
+        public static bool pause = false;
         edt edt = new edt();
         blague blague = new blague();
         quote quote = new quote();
@@ -81,15 +82,25 @@ namespace Bot_CNAM.Modules
         [Command("shuffle")]
         public async Task shuffle()
         {
-            var rand = new Random();
-            var listchannel = Context.Guild.VoiceChannels;
-            var user = Context.Guild.Users;
-            foreach (var u in user)
+            if (!pause)
             {
-                u.ModifyAsync(x => x.Channel = listchannel.ElementAt(rand.Next(0, listchannel.Count() - 1)));
-                Thread.Sleep(30);
+                pause = true;
+                var myThread = new Thread(new ThreadStart(Pause.fairepause5m));
+                myThread.Start();
+                var rand = new Random();
+                var listchannel = Context.Guild.VoiceChannels;
+                var user = Context.Guild.Users;
+                foreach (var u in user)
+                {
+                    u.ModifyAsync(x => x.Channel = listchannel.ElementAt(rand.Next(0, listchannel.Count())));
+                    Thread.Sleep(30);
+                }
+                await ReplyAsync("Shuffle terminé");
             }
-            await ReplyAsync("Shuffle terminé");
+            else
+            {
+                await ReplyAsync($"Il reste {300-Pause.cpt} secondes avant de pouvoir shuffle");
+            }
         }
 
     }
