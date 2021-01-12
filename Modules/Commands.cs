@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Bot_CNAM.Modules
@@ -85,8 +86,10 @@ namespace Bot_CNAM.Modules
             var user = Context.Guild.Users;
             foreach (var u in user)
             {
-                await u.ModifyAsync(x => x.Channel = listchannel.ElementAt(rand.Next(0, listchannel.Count() - 1)));
+                u.ModifyAsync(x => x.Channel = listchannel.ElementAt(rand.Next(0, listchannel.Count() - 1)));
+                Thread.Sleep(30);
             }
+            await ReplyAsync("Shuffle terminé");
         }
 
     }
