@@ -98,7 +98,7 @@ namespace Bot_CNAM.Modules
                 myThread.Start();
                 var rand = new Random();
                 var listchannel = Context.Guild.VoiceChannels;
-                var user = Context.Guild.Users.Where(x => !x.VoiceChannel.Equals(""));
+                var user = Context.Guild.Users;
                 foreach (var u in user)
                 {
                     u.ModifyAsync(x => x.Channel = listchannel.ElementAt(rand.Next(0, listchannel.Count())));
@@ -119,7 +119,7 @@ namespace Bot_CNAM.Modules
             foreach (var u in user)
             {
                 u.ModifyAsync(x => x.Channel = Context.Guild.GetVoiceChannel(ulong.Parse("622001239009263630")));
-                Thread.Sleep(20);
+                Thread.Sleep(5);
             }
             await ReplyAsync("Tous au bercail");
         }
