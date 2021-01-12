@@ -24,6 +24,7 @@ namespace Bot_CNAM.Modules
             str.AppendLine($"!edt pour avoir la semaine actuelle de l'edt");
             str.AppendLine($"!edtnext pour avoir la semaine suivante");
             str.AppendLine($"!shuffle pour faire chier le monde en vocal mais avec modération stp");
+            str.AppendLine($"!rassemblement pour faire revenir tout le monde au general");
             str.AppendLine($"!anniv @tag pour souhaiter un bon anniversaire à @tag");
             str.AppendLine($"!quote pour avoir une citation du hallivier of fame");
             str.AppendLine($"!pilon pour avoir des conseils");
@@ -97,7 +98,7 @@ namespace Bot_CNAM.Modules
                 myThread.Start();
                 var rand = new Random();
                 var listchannel = Context.Guild.VoiceChannels;
-                var user = Context.Guild.Users;
+                var user = Context.Guild.Users.Where(x => !x.VoiceChannel.Equals(""));
                 foreach (var u in user)
                 {
                     u.ModifyAsync(x => x.Channel = listchannel.ElementAt(rand.Next(0, listchannel.Count())));
@@ -107,8 +108,20 @@ namespace Bot_CNAM.Modules
             }
             else
             {
-                await ReplyAsync($"Il reste {300-Pause.cpt} secondes avant de pouvoir shuffle");
+                await ReplyAsync($"Il reste {600-Pause.cpt} secondes avant de pouvoir shuffle");
             }
+        }
+
+        [Command("rassemblement")]
+        public async Task rassemblementasync()
+        {
+            var user = Context.Guild.Users;
+            foreach (var u in user)
+            {
+                u.ModifyAsync(x => x.Channel = Context.Guild.GetVoiceChannel(ulong.Parse("622001239009263630")));
+                Thread.Sleep(20);
+            }
+            await ReplyAsync("Tous au bercail");
         }
 
     }
