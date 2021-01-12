@@ -98,7 +98,7 @@ namespace Bot_CNAM.Modules
                 myThread.Start();
                 var rand = new Random();
                 var listchannel = Context.Guild.VoiceChannels;
-                var user = Context.Guild.Users.Where(x => !x.VoiceChannel.Equals(""));
+                var user = Context.Guild.Users.Where(x => x.VoiceChannel != null).ToList();
                 foreach (var u in user)
                 {
                     u.ModifyAsync(x => x.Channel = listchannel.ElementAt(rand.Next(0, listchannel.Count())));
@@ -115,7 +115,7 @@ namespace Bot_CNAM.Modules
         [Command("rassemblement")]
         public async Task rassemblementasync()
         {
-            var user = Context.Guild.Users;
+            var user = Context.Guild.Users.Where(x => x.VoiceChannel != null).ToList();
             foreach (var u in user)
             {
                 u.ModifyAsync(x => x.Channel = Context.Guild.GetVoiceChannel(ulong.Parse("622001239009263630")));
