@@ -71,6 +71,11 @@ namespace Bot_CNAM.Modules
             await ReplyAsync(x);
         }
 
+        [Command("anniv")]
+        public async Task annivasync(string str)
+        {
+            await ReplyAsync(Vrac.anniv(str));
+        }
 
     }
 }
