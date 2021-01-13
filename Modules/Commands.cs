@@ -119,9 +119,21 @@ namespace Bot_CNAM.Modules
             foreach (var u in user)
             {
                 u.ModifyAsync(x => x.Channel = Context.Guild.GetVoiceChannel(ulong.Parse("622001239009263630")));
-                Thread.Sleep(20);
+                Thread.Sleep(5);
             }
             await ReplyAsync("Tous au bercail");
+        }
+
+        [Command("sleep")]
+        public async Task Sleepsaync(int x)
+        {
+            new Thread(() => Vrac.Sleep(x, this)).Start();
+        }
+
+
+        public async Task Msg(string msg)
+        {
+            await ReplyAsync(msg);
         }
 
     }
